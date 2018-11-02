@@ -19,20 +19,35 @@ def play(sound):
 def make_wav_from(list_of_strings):
     path = os.getcwd()
 
+    #Don't know how to make an empty start (like ''), NOSOUND was the wayout.
     combined_sounds = AudioSegment.from_wav('{}/sounds/NOSOUND.wav'.format(path))
     for string in list_of_strings:
-        sound = AudioSegment.from_wav('{}/sounds/{}.wav'.format(path, string))
-        combined_sounds += sound
+        try:
+            if string == ' ':
+                sound = AudioSegment.from_wav('{}/sounds/BREAK.wav'.format(path))
+            else:
+                sound = AudioSegment.from_wav('{}/sounds/{}.wav'.format(path, string))
+        except FileNotFoundError:
+            sound = AudioSegment.from_wav('{}/sounds/NOISE.wav'.format(path))
+        finally:
+            combined_sounds += sound
     
     combined_sounds.export('{}/sounds/sentence.wav'.format(path), format="wav")
 
 
 def words_and_spaces_of(string):
     words = string.lower().split(' ')
+    words = [' ' if word == '' else word for word in words]
 
     words_and_spaces = words
-    for i in range(1, 2*len(words)-1, 2):
-        words_and_spaces.insert(i, ' ')
+
+    i = 1
+    while i < len(words):
+        if words_and_spaces[i - 1] != ' ':
+            words_and_spaces.insert(i, ' ')
+        else:
+            pass
+        i += 1
 
     return words_and_spaces
 
@@ -69,9 +84,6 @@ def main():
     while True:
         sentence = input('What should I say? ')
         sounds_of_sentence = sounds_of(sentence)
-
-        #for sound in sounds_of_sentence:
-        #    play(sound)
 
         make_wav_from(sounds_of_sentence)
         path = os.getcwd()
