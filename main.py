@@ -1,19 +1,8 @@
 import os
 import re
-from time import sleep
 from pydub import AudioSegment
 
 OPTIONS = ['o', 'mit', 'ez', 'ott', 'é', 'zé', 'lső', 'nt', 'gye', 'nne', 'jól', 'mbe', 'úgy']
-
-
-def play(sound):
-    path = os.getcwd()
-    if sound in OPTIONS:
-        os.system('aplay {}/sounds/{}.wav'.format(path, sound))
-    elif sound == ' ':
-        sleep(1/5)
-    else:
-        os.system('aplay {}/sounds/NOISE.wav'.format(path))
 
 
 def make_wav_from(list_of_strings):
