@@ -1,8 +1,9 @@
 import os
 import re
 from time import sleep
+from pydub import AudioSegment
 
-OPTIONS = ['a', 'meg', 'vagy', 'vagyok', 'van']
+OPTIONS = ['o', 'mit', 'ez', 'ott', 'é', 'zé', 'lső', 'nt', 'gye', 'nne', 'jól', 'mbe', 'úgy']
 
 
 def play(sound):
@@ -10,9 +11,20 @@ def play(sound):
     if sound in OPTIONS:
         os.system('aplay {}/sounds/{}.wav'.format(path, sound))
     elif sound == ' ':
-        sleep(1/9)
+        sleep(1/5)
     else:
         os.system('aplay {}/sounds/NOISE.wav'.format(path))
+
+
+def make_wav_from(list_of_strings):
+    path = os.getcwd()
+
+    combined_sounds = AudioSegment.from_wav('{}/sounds/NOSOUND.wav'.format(path))
+    for string in list_of_strings:
+        sound = AudioSegment.from_wav('{}/sounds/{}.wav'.format(path, string))
+        combined_sounds += sound
+    
+    combined_sounds.export('{}/sounds/sentence.wav'.format(path), format="wav")
 
 
 def words_and_spaces_of(string):
@@ -26,7 +38,7 @@ def words_and_spaces_of(string):
 
 
 def sounds_of(sentence):
-    '''Creates a list of spaces, words, subwords from the given sentence'''
+    '''Returns a list of spaces, words, subwords from the given sentence'''
     sounds_of_sentence = words_and_spaces_of(sentence)
 
     for i, item in enumerate(sounds_of_sentence):
@@ -54,17 +66,22 @@ def vowels_in(string):
 
 
 def main():
-    sentence = input('What should I say? ')
-    sounds_of_sentence = sounds_of(sentence)
+    while True:
+        sentence = input('What should I say? ')
+        sounds_of_sentence = sounds_of(sentence)
 
-    for sound in sounds_of_sentence:
-        play(sound)
+        #for sound in sounds_of_sentence:
+        #    play(sound)
+
+        make_wav_from(sounds_of_sentence)
+        path = os.getcwd()
+        os.system('aplay {}/sounds/sentence.wav'.format(path))
 
 
 if __name__ == '__main__':
     main()
 
 
-#I will need a list of the necessary sounds to be recorded.
+#I will need a list of the necessary sounds to be recorded. Done
 #There should be a way to replace OPTIONS, and creat it automaticallyat the start.
 #   Should look up the file names in the directory.
